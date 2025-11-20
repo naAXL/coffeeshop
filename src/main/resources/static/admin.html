@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coffee Menu - Admin Panel</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6F4E37;
+            --secondary: #A67C52;
+            --success: #28a745;
+            --danger: #dc3545;
+            --warning: #ffc107;
+            --light: #f8f9fa;
+            --dark: #343a40;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 20px 0;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .stats {
+            display: flex;
+            gap: 30px;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .alert-close {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            opacity: 0.7;
+        }
+
+        .alert-close:hover {
+            opacity: 1;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 30px;
+            background: white;
+            padding: 10px;
+            border-radius: 12px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+        }
+
+        .tab {
+            flex: 1;
+            padding: 15px 30px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 8px;
+            transition: all 0.3s;
+            color: var(--dark);
+        }
+
+        .tab:hover {
+            background: var(--light);
+        }
+
+        .tab.active {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 2px 10px rgba(111, 78, 55, 0.3);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+        }
+
+        .card-header {
+            font-size: 22px;
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--light);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark);
+            font-size: 14px;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(111, 78, 55, 0.1);
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 25px;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(111, 78, 55, 0.3);
+        }
+
+        .btn-secondary {
+            background: var(--light);
+            color: var(--dark);
+        }
+
+        .btn-secondary:hover {
+            background: #e2e6ea;
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+        }
+
+        .btn-sm {
+            padding: 8px 16px;
+            font-size: 13px;
+        }
+
+        .items-list {
+            margin-top: 30px;
+        }
+
+        .search-box {
+            margin-bottom: 20px;
+        }
+
+        .search-box input {
+            padding: 12px 20px;
+            font-size: 16px;
+        }
+
+        .item-row {
+            background: white;
+            border: 2px solid var(--light);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            display: grid;
+            grid-template-columns: 80px 1fr auto;
+            gap: 20px;
+            align-items: center;
+            transition: all 0.3s;
+        }
+
+        .item-row:hover {
+            border-color: var(--primary);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transform: translateX(5px);
+        }
+
+        .item-image-thumb {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 8px;
+            background: var(--light);
+        }
+
+        .item-info {
+            flex: 1;
+        }
+
+        .item-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+
+        .item-subtitle {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .item-meta {
+            display: flex;
+            gap: 15px;
+            font-size: 13px;
+            color: #999;
+        }
+
+        .item-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+
+        .empty-state-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: var(--primary);
+        }
+
+        .modal-footer {
+            display: flex;
+            gap: 10px;
+            margin-top: 25px;
+            justify-content: flex-end;
+        }
+
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats {
+                display: none;
+            }
+
+            .item-row {
+                grid-template-columns: 60px 1fr;
+                gap: 15px;
+            }
+
+            .item-actions {
+                grid-column: 1 / -1;
+                justify-content: center;
+            }
+
+            .btn-group {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="header">
+    <div class="header-content">
+        <div class="logo">
+            <span>☕</span>
+            <span>Coffee Menu Admin</span>
+        </div>
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-value" id="statsCategories">0</div>
+                <div class="stat-label">Categories</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="statsItems">0</div>
+                <div class="stat-label">Menu Items</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div id="alertContainer"></div>
+
+    <div class="tabs">
+        <button class="tab active" data-tab="categories">
+            Категории
+        </button>
+        <button class="tab" data-tab="items">
+            Предметы Меню
+        </button>
+    </div>
+
+    <div id="categoriesTab" class="tab-content active">
+        <div class="card">
+            <div class="card-header">Добавить/Отредактировать Категории</div>
+            <form id="categoryForm">
+                <input type="hidden" id="categoryId">
+
+                <div class="form-grid">
+                    <div class="form-group full-width">
+                        <label>Image URL *</label>
+                        <label for="categoryImage"></label><input type="url" id="categoryImage" required
+                                                                  placeholder="https://example.com/image.jpg">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Название (Русский)</label>
+                        <label for="categoryNameRu"></label><input type="text" id="categoryNameRu" required
+                                                                   placeholder="Кофе">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Название (Англ) </label>
+                        <label for="categoryNameEn"></label><input type="text" id="categoryNameEn" required
+                                                                   placeholder="Coffee">
+                    </div>
+                </div>
+
+                <div class="btn-group">
+                    <button type="submit" class="btn btn-primary">
+                        Сохранить Категорию
+                    </button>
+                    <button type="button" class="btn btn-secondary" onclick="admin.resetCategoryForm()">
+                        Очистить
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <div class="card items-list">
+            <div class="card-header"> Существующие Категории</div>
+            <div class="search-box">
+                <input type="text" id="categorySearch"
+                       placeholder="Поиск">
+            </div>
+            <div id="categoriesList">
+            </div>
+        </div>
+    </div>
+
+    <div id="itemsTab" class="tab-content">
+        <div class="card">
+            <div class="card-header"> Добавить/Отредактировать Предметы</div>
+            <form id="itemForm">
+                <input type="hidden" id="itemId">
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Категория</label>
+                        <select id="itemCategory" required>
+                            <option value="">Выбрать Категорию</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Цена </label>
+                        <input type="number" id="itemPrice" step="0.01" min="0"
+                               required placeholder="3.50">
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label>Image URL *</label>
+                        <input type="url" id="itemImage" required
+                               placeholder="https://example.com/item.jpg">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Название (Русский) *</label>
+                        <input type="text" id="itemNameRu" required
+                               placeholder="Эспрессо">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Название (Англ) *</label>
+                        <input type="text" id="itemNameEn" required
+                               placeholder="Espresso">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Описание (Русский)</label>
+                        <textarea id="itemDescRu"
+                                  placeholder="Классический итальянский кофе"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Описание (Англ)</label>
+                        <textarea id="itemDescEn"
+                                  placeholder="Classic Italian coffee"></textarea>
+                    </div>
+                </div>
+
+                <div class="btn-group">
+                    <button type="submit" class="btn btn-primary">
+                        Сохранить
+                    </button>
+                    <button type="button" class="btn btn-secondary" onclick="admin.resetItemForm()">
+                        Очистить
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <div class="card items-list">
+            <div class="card-header">Существующие предметы</div>
+            <div class="search-box">
+                <input type="text" id="itemSearch"
+                       placeholder="Поиск">
+            </div>
+            <div id="itemsList">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="deleteModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">Подтвердить удаление</div>
+        <p id="deleteModalText"></p>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="admin.closeDeleteModal()">
+                Отмена
+            </button>
+            <button class="btn btn-danger" onclick="admin.confirmDelete()">
+                Удалить
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const API_URL = 'http://localhost:8080/api';
+
+    const admin = {
+        categories: [],
+        items: [],
+        deleteCallback: null,
+
+        async init() {
+            this.setupEventListeners();
+            await this.loadCategories();
+            await this.loadItems();
+            this.updateStats();
+        },
+
+        setupEventListeners() {
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.addEventListener('click', (e) => {
+                    const tabName = e.target.dataset.tab;
+                    this.switchTab(tabName);
+                });
+            });
+
+            document.getElementById('categoryForm').addEventListener('submit', (e) => {
+                e.preventDefault();
+                this.saveCategory();
+            });
+
+            document.getElementById('itemForm').addEventListener('submit', (e) => {
+                e.preventDefault();
+                this.saveItem();
+            });
+
+            document.getElementById('categoryImage').addEventListener('input', (e) => {
+                this.previewImage(e.target.value, 'categoryImagePreview');
+            });
+
+            document.getElementById('itemImage').addEventListener('input', (e) => {
+                this.previewImage(e.target.value, 'itemImagePreview');
+            });
+
+            document.getElementById('categorySearch').addEventListener('input', (e) => {
+                this.filterCategories(e.target.value);
+            });
+
+            document.getElementById('itemSearch').addEventListener('input', (e) => {
+                this.filterItems(e.target.value);
+            });
+        },
+
+        switchTab(tabName) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+
+            document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+            document.getElementById(tabName + 'Tab').classList.add('active');
+        },
+
+        previewImage(url, previewId) {
+            const preview = document.getElementById(previewId);
+            if (url) {
+                preview.src = url;
+                preview.classList.add('visible');
+            } else {
+                preview.classList.remove('visible');
+            }
+        },
+
+        showAlert(message, isError = false) {
+            const container = document.getElementById('alertContainer');
+            const alert = document.createElement('div');
+            alert.className = `alert ${isError ? 'alert-error' : 'alert-success'}`;
+            alert.innerHTML = `
+                    <span>${message}</span>
+                    <button class="alert-close" onclick="this.parentElement.remove()">×</button>
+                `;
+            container.appendChild(alert);
+
+            setTimeout(() => alert.remove(), 5000);
+        },
+
+        updateStats() {
+            document.getElementById('statsCategories').textContent = this.categories.length;
+            document.getElementById('statsItems').textContent = this.items.length;
+        },
+
+        async loadCategories() {
+            try {
+                const res = await fetch(`${API_URL}/categories`);
+                if (!res.ok) throw new Error('Failed to load');
+
+                this.categories = await res.json();
+                this.renderCategories();
+                this.updateCategorySelect();
+                this.updateStats();
+            } catch (error) {
+                this.showAlert('❌ Failed to load categories', true);
+                console.error(error);
+            }
+        },
+
+        renderCategories(filter = '') {
+            const list = document.getElementById('categoriesList');
+            const filtered = this.categories.filter(cat =>
+                cat.names.en.toLowerCase().includes(filter.toLowerCase()) ||
+                cat.names.ru.toLowerCase().includes(filter.toLowerCase())
+            );
+
+            if (filtered.length === 0) {
+                list.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-state-icon">📁</div>
+                            <p>No categories found</p>
+                        </div>
+                    `;
+                return;
+            }
+
+            list.innerHTML = filtered.map(cat => `
+                    <div class="item-row">
+                        <img src="${cat.imageUrl}" class="item-image-thumb"
+                             onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2280%22 height=%2280%22%3E%3Crect fill=%22%23ddd%22 width=%2280%22 height=%2280%22/%3E%3C/svg%3E'" alt="">
+                        <div class="item-info">
+                            <div class="item-title">${cat.names.en}</div>
+                            <div class="item-subtitle">${cat.names.ru}</div>
+                            <div class="item-meta">
+                                <span>ID: ${cat.id}</span>
+                            </div>
+                        </div>
+                        <div class="item-actions">
+                            <button class="btn btn-success btn-sm" onclick="admin.editCategory(${cat.id})">
+                                Редактировать
+                            </button>
+                            <button class="btn btn-danger btn-sm" onclick="admin.deleteCategoryConfirm(${cat.id})">
+                                Удалить
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+        },
+
+        filterCategories(query) {
+            this.renderCategories(query);
+        },
+
+        updateCategorySelect() {
+            const select = document.getElementById('itemCategory');
+            select.innerHTML = '<option value="">Выбрать Категорию</option>' +
+                this.categories.map(cat =>
+                    `<option value="${cat.id}">${cat.names.en} / ${cat.names.ru}</option>`
+                ).join('');
+        },
+
+        editCategory(id) {
+            const cat = this.categories.find(c => c.id === id);
+            if (!cat) return;
+
+            document.getElementById('categoryId').value = cat.id;
+            document.getElementById('categoryImage').value = cat.imageUrl;
+            document.getElementById('categoryNameRu').value = cat.names.ru || '';
+            document.getElementById('categoryNameEn').value = cat.names.en || '';
+
+            this.previewImage(cat.imageUrl, 'categoryImagePreview');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        },
+
+        async saveCategory() {
+            const id = document.getElementById('categoryId').value;
+            const data = {
+                imageUrl: document.getElementById('categoryImage').value,
+                names: {
+                    ru: document.getElementById('categoryNameRu').value,
+                    en: document.getElementById('categoryNameEn').value
+                }
+            };
+
+            try {
+                const url = id ? `${API_URL}/categories/${id}` : `${API_URL}/categories`;
+                const method = id ? 'PUT' : 'POST';
+
+                const res = await fetch(url, {
+                    method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                if (!res.ok) throw new Error('Failed to save');
+
+                this.showAlert(id ? '✅ Category updated successfully!' : '✅ Category created successfully!');
+                this.resetCategoryForm();
+                await this.loadCategories();
+            } catch (error) {
+                this.showAlert('❌ Failed to save category', true);
+                console.error(error);
+            }
+        },
+
+        deleteCategoryConfirm(id) {
+            const cat = this.categories.find(c => c.id === id);
+            document.getElementById('deleteModalText').textContent =
+                `Are you sure you want to delete "${cat.names.en}"? This will also delete all menu items in this category.`;
+            document.getElementById('deleteModal').classList.add('active');
+            this.deleteCallback = () => this.deleteCategory(id);
+        },
+
+        async deleteCategory(id) {
+            try {
+                const res = await fetch(`${API_URL}/categories/${id}`, { method: 'DELETE' });
+                if (!res.ok) throw new Error('Failed to delete');
+
+                this.showAlert('✅ Category deleted successfully!');
+                await this.loadCategories();
+                await this.loadItems();
+            } catch (error) {
+                this.showAlert('❌ Failed to delete category', true);
+                console.error(error);
+            }
+        },
+
+        resetCategoryForm() {
+            document.getElementById('categoryForm').reset();
+            document.getElementById('categoryId').value = '';
+            document.getElementById('categoryImagePreview').classList.remove('visible');
+        },
+
+        // Menu Items
+        async loadItems() {
+            try {
+                const promises = this.categories.map(cat =>
+                    fetch(`${API_URL}/categories/${cat.id}/items`).then(r => r.json())
+                );
+                const results = await Promise.all(promises);
+                this.items = results.flat();
+                this.renderItems();
+                this.updateStats();
+            } catch (error) {
+                this.showAlert('❌ Failed to load items', true);
+                console.error(error);
+            }
+        },
+
+        renderItems(filter = '') {
+            const list = document.getElementById('itemsList');
+            const filtered = this.items.filter(item =>
+                item.names.en.toLowerCase().includes(filter.toLowerCase()) ||
+                item.names.ru.toLowerCase().includes(filter.toLowerCase()) ||
+                (item.descriptions.en || '').toLowerCase().includes(filter.toLowerCase()) ||
+                (item.descriptions.ru || '').toLowerCase().includes(filter.toLowerCase())
+            );
+
+            if (filtered.length === 0) {
+                list.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-state-icon">🍰</div>
+                            <p>Не найдено предметов</p>
+                        </div>
+                    `;
+                return;
+            }
+
+            list.innerHTML = filtered.map(item => {
+                const category = this.categories.find(c => c.id === item.categoryId);
+                return `
+                        <div class="item-row">
+                            <img src="${item.imageUrl}" class="item-image-thumb"
+                                 onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2280%22 height=%2280%22%3E%3Crect fill=%22%23ddd%22 width=%2280%22 height=%2280%22/%3E%3C/svg%3E'">
+                            <div class="item-info">
+                                <div class="item-title">${item.names.en} / ${item.names.ru}</div>
+                                <div class="item-subtitle">${item.descriptions.en || 'No description'}</div>
+                                <div class="item-meta">
+                                    <span>$${item.price.toFixed(2)}</span>
+                                    <span>${category ? category.names.en : 'Unknown'}</span>
+                                    <span>ID: ${item.id}</span>
+                                </div>
+                            </div>
+                            <div class="item-actions">
+                                <button class="btn btn-success btn-sm" onclick="admin.editItem(${item.id})">
+                                    Редактировать
+                                </button>
+                                <button class="btn btn-danger btn-sm" onclick="admin.deleteItemConfirm(${item.id})">
+                                    Удалить
+                                </button>
+                            </div>
+                        </div>
+                    `;
+            }).join('');
+        },
+
+        filterItems(query) {
+            this.renderItems(query);
+        },
+
+        editItem(id) {
+            const item = this.items.find(i => i.id === id);
+            if (!item) return;
+
+            document.getElementById('itemId').value = item.id;
+            document.getElementById('itemCategory').value = item.categoryId;
+            document.getElementById('itemImage').value = item.imageUrl;
+            document.getElementById('itemPrice').value = item.price;
+            document.getElementById('itemNameRu').value = item.names.ru || '';
+            document.getElementById('itemNameEn').value = item.names.en || '';
+            document.getElementById('itemDescRu').value = item.descriptions.ru || '';
+            document.getElementById('itemDescEn').value = item.descriptions.en || '';
+
+            this.previewImage(item.imageUrl, 'itemImagePreview');
+            this.switchTab('items');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        },
+
+        async saveItem() {
+            const id = document.getElementById('itemId').value;
+            const data = {
+                categoryId: parseInt(document.getElementById('itemCategory').value),
+                imageUrl: document.getElementById('itemImage').value,
+                price: parseFloat(document.getElementById('itemPrice').value),
+                names: {
+                    ru: document.getElementById('itemNameRu').value,
+                    en: document.getElementById('itemNameEn').value
+                },
+                descriptions: {
+                    ru: document.getElementById('itemDescRu').value || '',
+                    en: document.getElementById('itemDescEn').value || ''
+                }
+            };
+
+            try {
+                const url = id ? `${API_URL}/items/${id}` : `${API_URL}/items`;
+                const method = id ? 'PUT' : 'POST';
+
+                const res = await fetch(url, {
+                    method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                if (!res.ok) throw new Error('Failed to save');
+
+                this.showAlert(id ? '✅ Item updated successfully!' : '✅ Item created successfully!');
+                this.resetItemForm();
+                await this.loadItems();
+            } catch (error) {
+                this.showAlert('❌ Failed to save item', true);
+                console.error(error);
+            }
+        },
+
+        deleteItemConfirm(id) {
+            const item = this.items.find(i => i.id === id);
+            document.getElementById('deleteModalText').textContent =
+                `Are you sure you want to delete "${item.names.en}"?`;
+            document.getElementById('deleteModal').classList.add('active');
+            this.deleteCallback = () => this.deleteItem(id);
+        },
+
+        async deleteItem(id) {
+            try {
+                const res = await fetch(`${API_URL}/items/${id}`, { method: 'DELETE' });
+                if (!res.ok) throw new Error('Failed to delete');
+
+                this.showAlert('✅ Item deleted successfully!');
+                await this.loadItems();
+            } catch (error) {
+                this.showAlert('❌ Failed to delete item', true);
+                console.error(error);
+            }
+        },
+
+        resetItemForm() {
+            document.getElementById('itemForm').reset();
+            document.getElementById('itemId').value = '';
+            document.getElementById('itemImagePreview').classList.remove('visible');
+        },
+
+        // Modal
+        closeDeleteModal() {
+            document.getElementById('deleteModal').classList.remove('active');
+            this.deleteCallback = null;
+        },
+
+        confirmDelete() {
+            if (this.deleteCallback) {
+                this.deleteCallback();
+            }
+            this.closeDeleteModal();
+        }
+    };
+
+    document.addEventListener('DOMContentLoaded', () => admin.init());
+</script>
+</body>
+</html>

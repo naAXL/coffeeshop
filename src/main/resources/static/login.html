@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - Coffee Menu</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .login-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            max-width: 450px;
+            width: 100%;
+            animation: slideUp 0.5s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .login-header {
+            background: linear-gradient(135deg, #6F4E37, #A67C52);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+
+        .login-icon {
+            font-size: 64px;
+            margin-bottom: 15px;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .login-title {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .login-subtitle {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .login-body {
+            padding: 40px 30px;
+        }
+
+        .alert {
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            font-size: 14px;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 18px;
+            color: #999;
+        }
+
+        input {
+            width: 100%;
+            padding: 14px 15px 14px 45px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 15px;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #6F4E37;
+            box-shadow: 0 0 0 3px rgba(111, 78, 55, 0.1);
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+            color: #999;
+            transition: color 0.3s;
+        }
+
+        .password-toggle:hover {
+            color: #6F4E37;
+        }
+
+        .remember-me {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 25px;
+        }
+
+        .remember-me input[type="checkbox"] {
+            width: auto;
+            cursor: pointer;
+        }
+
+        .remember-me label {
+            margin: 0;
+            font-weight: normal;
+            cursor: pointer;
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #6F4E37, #A67C52);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(111, 78, 55, 0.3);
+        }
+
+        .btn-login:active {
+            transform: translateY(0);
+        }
+
+        .login-footer {
+            text-align: center;
+            padding: 20px 30px 30px;
+            color: #666;
+            font-size: 13px;
+        }
+
+        .login-footer a {
+            color: #6F4E37;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .login-footer a:hover {
+            text-decoration: underline;
+        }
+
+        .demo-credentials strong {
+            display: block;
+            margin-bottom: 8px;
+            color: #6F4E37;
+        }
+
+        .demo-credentials p {
+            margin: 5px 0;
+            color: #666;
+        }
+
+        @media (max-width: 480px) {
+            .login-header {
+                padding: 30px 20px;
+            }
+
+            .login-icon {
+                font-size: 48px;
+            }
+
+            .login-title {
+                font-size: 24px;
+            }
+
+            .login-body {
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="login-container">
+    <div class="login-header">
+        <div class="login-icon"></div>
+        <div class="login-title">Admin Login</div>
+        <div class="login-subtitle">Coffee Menu Management System</div>
+    </div>
+
+    <div class="login-body">
+        <div id="errorAlert" class="alert alert-error" style="display: none;">
+            <strong>Не удалось зайти</strong><br>
+            Неправильный пароль или имя
+        </div>
+
+        <div id="logoutAlert" class="alert alert-success" style="display: none;">
+            <strong></strong><br>
+            Вы успешно вышли
+        </div>
+
+        <form id="loginForm" action="/perform_login" method="POST">
+            <div class="form-group">
+                <label for="username">Имя</label>
+                <div class="input-wrapper">
+                    <span class="input-icon"></span>
+                    <input type="text"
+                           id="username"
+                           name="username"
+                           placeholder="Введите имя"
+                           required
+                           autocomplete="username"
+                           autofocus>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Пароль</label>
+                <div class="input-wrapper">
+                    <span class="input-icon"></span>
+                    <input type="password"
+                           id="password"
+                           name="password"
+                           placeholder="Введите пароль"
+                           required
+                           autocomplete="current-password">
+                    <button type="button" class="password-toggle" onclick="togglePassword()">
+                    </button>
+                </div>
+            </div>
+
+            <div class="remember-me">
+                <input type="checkbox" id="remember" name="remember-me">
+                <label for="remember">Запомнить меня</label>
+            </div>
+
+            <button type="submit" class="btn-login">
+                <span></span>
+                <span>Зайти</span>
+            </button>
+        </form>
+
+    <div class="login-footer">
+        <a href="/">Назад в меню</a>
+    </div>
+</div>
+</div>
+
+<script>
+    const urlParams = new URLSearchParams(window.location.search);
+
+    if (urlParams.get('error') === 'true') {
+        document.getElementById('errorAlert').style.display = 'block';
+    }
+
+    if (urlParams.get('logout') === 'true') {
+        document.getElementById('logoutAlert').style.display = 'block';
+        setTimeout(() => {
+            document.getElementById('logoutAlert').style.display = 'none';
+        }, 3000);
+    }
+
+    function togglePassword() {
+        const passwordInput = document.getElementById('password');
+        const toggleBtn = document.querySelector('.password-toggle');
+
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            toggleBtn.textContent = '🙈';
+        } else {
+            passwordInput.type = 'password';
+            toggleBtn.textContent = '👁️';
+        }
+    }
+
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+        const username = document.getElementById('username').value.trim();
+        const password = document.getElementById('password').value.trim();
+
+        if (!username || !password) {
+            e.preventDefault();
+            alert('Please enter both username and password');
+        }
+    });
+
+    document.getElementById('username').addEventListener('input', () => {
+        document.getElementById('errorAlert').style.display = 'none';
+    });
+
+    document.getElementById('password').addEventListener('input', () => {
+        document.getElementById('errorAlert').style.display = 'none';
+    });
+</script>
+</body>
+</html>

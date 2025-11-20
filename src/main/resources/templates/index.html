@@ -189,6 +189,45 @@
             display: none !important;
         }
 
+        @media (max-width: 768px) {
+            .header-content {
+                padding: 0 15px;
+            }
+
+            .logo {
+                font-size: 20px;
+            }
+
+
+            .lang-btn {
+                padding: 15px 40px;
+                font-size: 20px;
+            }
+
+            .categories-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+                gap: 15px;
+            }
+
+            .category-image {
+                height: 150px;
+            }
+
+            .category-name {
+                font-size: 18px;
+                padding: 15px;
+            }
+
+            .item-card {
+                flex-direction: column;
+            }
+
+            .item-image {
+                width: 100%;
+                height: 200px;
+            }
+        }
+
     </style>
 </head>
 <body>

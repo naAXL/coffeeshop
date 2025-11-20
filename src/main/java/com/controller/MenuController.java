@@ -25,6 +25,12 @@ public class MenuController {
         return service.getCategoryById(id);
     }
 
+    @GetMapping("/login")
+    public String login() {
+        return "login";
+    }
+
+
     @PostMapping("/categories")
     public CategoryDTO createCategory(@RequestBody CategoryRequest req) {
         return service.createCategory(req);
